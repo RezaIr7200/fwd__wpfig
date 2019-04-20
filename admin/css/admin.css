@@ -1,5 +1,21 @@
-
-.wptrus-list-wrapper .button.delete{
-    background:  #FF5733 ;
-    color: white
+#wpfig_gallery_src .wpfig_gallery_container{
+    position: relative;
+    box-sizing: border-box;
 }
+
+
+#wpfig_gallery_src .wpfig_gallery_container .wpfig_gallery_remove{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    left: 5px;
+    width: 30px;
+    height: 30px;
+    
+    text-align: center;
+    padding: 0;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+}
+

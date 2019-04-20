@@ -27,7 +27,7 @@
 		// Create Featured Gallery state. This is essentially the Gallery state, but selection behavior is altered.
 		meta_gallery_frame.states.add([
 			new wp.media.controller.Library({
-				id: 'shift8-portfolio-gallery',
+				id: 'wpfig-gallery',
 				title: 'Select Images for Gallery',
 				priority: 20,
 				toolbar: 'main-gallery',
@@ -69,7 +69,7 @@
 			imageHTML += '<ul class="wpfig_gallery_list">';
 			images.each(function (attachment) {
 				imageIDArray.push(attachment.attributes.id);
-				imageHTML += '<li><div class="wpfig_gallery_container"><span class="wpfig_gallery_close"><img id="' + attachment.attributes.id + '" src="' + attachment.attributes.sizes.thumbnail.url + '"></span></div></li>';
+				imageHTML += '<li><div class="wpfig_gallery_container"><button class="wpfig_gallery_remove">❌</button><img id="' + attachment.attributes.id + '" src="' + attachment.attributes.sizes.thumbnail.url + '"></div></li>';
 			});
 			imageHTML += '</ul>';
 			metadataString = imageIDArray.join(",");
@@ -77,7 +77,7 @@
 				$("#wpfig_gallery").val(metadataString);
 				$("#wpfig_gallery_src").html(imageHTML);
 				setTimeout(function () {
-					ajaxUpdateTempMetaData();
+					//ajaxUpdateTempMetaData();
 				}, 0);
 			}
 		});
@@ -88,7 +88,7 @@
 	});
 
 
-	$(document.body).on('click', '.wpfig_gallery_close', function (event) {
+	$(document.body).on('click', '.wpfig_gallery_remove', function (event) {
 
 		event.preventDefault();
 

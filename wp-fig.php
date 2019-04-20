@@ -46,6 +46,10 @@ class WP_fig
 
     private $_isAjax = false;
 
+    private $_metaFields = null;
+
+    private $_prefix = 'wpfig_';
+
     /**
      * Class constructor
      */
@@ -57,20 +61,31 @@ class WP_fig
         $this->_tableName = $wpdb->prefix . WPFIG_TABLE_NAME;
 
 
+        $this->_metaFields = array(
+            array(
+                'label'=> 'Gallery Images',
+                'desc'  => 'This is the gallery images on the single item page.',
+                'id'    => $this->_prefix.'gallery',
+                'type'  => 'gallery'
+            ),
+        );
+
         // is current request type is ajax?
         if (defined('DOING_AJAX') && DOING_AJAX) {
             $this->isAjax = true;
         }
 
+        add_action( 'admin_enqueue_scripts', array( $this, 'addAdminScripts' ));
+
+
+
         // load textdomain
         add_action('init', array( $this, 'loadTextDomain'));
     
-   
-        // add admin script
-        //add_action('admin_enqueue_scripts', array( $this, 'addAdminScripts'));
- 
-  
 
+        add_action('add_meta_boxes', array( $this, 'addMetaBox'));
+        add_action('save_post',  array($this,'saveMeta'));
+        
     }
 
     /**
@@ -103,14 +118,12 @@ class WP_fig
      *
      * @return void
      */
-    public function addAdminScripts()
-    {
-        //wp_enqueue_style( 'tailwind-admin', plugins_url('admin/css/tailwind.min.css', __FILE__) );
-        wp_enqueue_style('wp-fig-adminstyle', plugins_url('admin/css/admin.css', __FILE__));
-        wp_enqueue_script('wp-fig-adminjs', plugins_url('admin/js/consulting-form.js', __FILE__));
+    public function addAdminScripts(){
+        wp_enqueue_media();
+        wp_enqueue_script('media-upload');
+        wp_enqueue_style( 'wpfig_admin_css', plugins_url('admin/css/admin.css', __FILE__) );
+        wp_enqueue_script( 'wpfig_admin_script', plugins_url('admin/js/wp-fig.js', __FILE__) );
     }
-
-
 
     /**
      * Check current user perms
@@ -126,105 +139,76 @@ class WP_fig
     }
 
 
+    // Add the Meta Box
+    public function addMetaBox() {
+        add_meta_box(
+            'custom_meta_box', // $id
+            'Portfolio Gallery', // $title
+            array($this,'renderMetabox'), // $callback
+            'post', // $page
+            'side', // $context
+            'high'
+        ); // $priority
+    }
+
+    public function renderMetabox($object){
+
+        global  $post;
+        // Use nonce for verification
+        echo '<input type="hidden" name="custom_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';
+
+        // Begin the field table and loop
     
+        foreach ($this->_metaFields as $field) {
+                // get value of this field if it exists for this post
+                $meta = get_post_meta($post->ID, $field['id'], true);
+
+
+                // begin a table row with
+
+        
+                switch($field['type']) {
+
+                        case 'gallery':
+                        $meta_html = null;
+                        if ($meta) {
+                
+                                $meta_html .= '<ul class="wpfig_gallery_list">';
+                                $meta_array = explode(',', $meta);
+                                foreach ($meta_array as $meta_gall_item) {
+                                        $meta_html .= '<li><div class="wpfig_gallery_container"><button class="wpfig_gallery_remove">❌</button><img id="' . esc_attr($meta_gall_item) . '" src="' . wp_get_attachment_thumb_url($meta_gall_item) . '"></div></li>';
+                                }
+                                $meta_html .= '</ul>';
+                        }
+                        echo '<input id="wpfig_gallery" type="hidden" name="wpfig_gallery" value="' . esc_attr($meta) . '" />
+                        <span id="wpfig_gallery_src">' . $meta_html . '</span>
+                        <div class="shift8_gallery_button_container"><input id="wpfig_gallery_button" type="button" class="components-button is-button is-default is-large widefat" value="Manage Gallery" /></div>';
+                        break;
+                } //end switch
+            
+        } // end foreach
+
+    }
+
+    /**
+     * 
+     */
+    public function saveMeta($post_id)
+    {
+        if (array_key_exists($this->_prefix . 'gallery', $_POST)) {
+            
+            update_post_meta(
+                $post_id,
+                $this->_prefix . 'gallery',
+                $_POST[$this->_prefix . 'gallery']
+            );
+        }
+    }
+
 }
 
 
 // Instantiate our class
 $wp_fig = wp_fig::getInstance();
 
-
-
-// Add the Meta Box
-function wpfig_add_custom_meta_box() {
-    add_meta_box(
-        'custom_meta_box', // $id
-        'Portfolio Gallery', // $title
-        'wpfig_show_custom_meta_box', // $callback
-        'post', // $page
-        'side', // $context
-        'high'); // $priority
-}
-add_action('add_meta_boxes', 'wpfig_add_custom_meta_box');
-
-
-
-// Field Array
-$prefix = 'wpfig_';
-$custom_meta_fields = array(
-
-    array(
-        'label'=> 'Gallery Images',
-        'desc'  => 'This is the gallery images on the single item page.',
-        'id'    => $prefix.'gallery',
-        'type'  => 'gallery'
-    ),
-);
-
-
-// The Callback
-function wpfig_show_custom_meta_box($object) {
-    global $custom_meta_fields, $post;
-    // Use nonce for verification
-    echo '<input type="hidden" name="custom_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';
-
-    // Begin the field table and loop
-  
-    foreach ($custom_meta_fields as $field) {
-            // get value of this field if it exists for this post
-            $meta = get_post_meta($post->ID, $field['id'], true);
-
-
-            // begin a table row with
-
-    
-            switch($field['type']) {
-
-                    case 'gallery':
-                    $meta_html = null;
-                    if ($meta) {
-               
-                            $meta_html .= '<ul class="wpfig_gallery_list">';
-                            $meta_array = explode(',', $meta);
-                            foreach ($meta_array as $meta_gall_item) {
-                                    $meta_html .= '<li><div class="wpfig_gallery_container"><span class="wpfig_gallery_close"><img id="' . esc_attr($meta_gall_item) . '" src="' . wp_get_attachment_thumb_url($meta_gall_item) . '"></span></div></li>';
-                            }
-                            $meta_html .= '</ul>';
-                    }
-                    echo '<input id="wpfig_gallery" type="hidden" name="wpfig_gallery" value="' . esc_attr($meta) . '" />
-                    <span id="wpfig_gallery_src">' . $meta_html . '</span>
-                    <div class="shift8_gallery_button_container"><input id="wpfig_gallery_button" type="button" class="components-button is-button is-default is-large widefat" value="Manage Gallery" /></div>';
-                    break;
-            } //end switch
-          
-    } // end foreach
-
-}
-
-
-function wpfig_save_meta($post_id)
-{
-    global $prefix;
-    if (array_key_exists('wpfig_gallery', $_POST)) {
-  
-        update_post_meta(
-            $post_id,
-            $prefix . 'gallery',
-            $_POST['wpfig_gallery']
-        );
-    }
-}
-add_action('save_post', 'wpfig_save_meta');
-
-
-
-
-// Register admin scripts for custom fields
-function wpfig_load_wp_admin_style() {
-    wp_enqueue_media();
-    wp_enqueue_script('media-upload');
-    wp_enqueue_style( 'wpfig_admin_css', plugins_url('admin/css/admin.css', __FILE__) );
-    wp_enqueue_script( 'wpfig_admin_script', plugins_url('admin/js/wp-fig.js', __FILE__) );
-}
-add_action( 'admin_enqueue_scripts', 'wpfig_load_wp_admin_style' );
 
