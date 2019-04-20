@@ -1,0 +1,67 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: wp-fcrf\n"
+"POT-Creation-Date: 2019-04-09 09:33+0430\n"
+"PO-Revision-Date: 2019-04-09 09:33+0430\n"
+"Last-Translator: \n"
+"Language-Team: reza ramezanpour\n"
+"Language: fa_IR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.6\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: includes/views/consults-history.php:44
+msgid "Delete"
+msgstr ""
+
+#: includes/views/consults.php:44
+msgid "Archive"
+msgstr ""
+
+#: includes/views/req-form.php:30
+msgid "Send"
+msgstr "ارسال"
+
+#: wp-fcrf.php:139 wp-fcrf.php:196
+msgid "Please enter a valid phone number"
+msgstr "لطفا شماره تلفن معتبر وارد کنید"
+
+#: wp-fcrf.php:140 wp-fcrf.php:190 wp-fcrf.php:234
+msgid "Please fill out all required fields"
+msgstr "لطفا همه‌ی فیلدهای ضروری را پر کنید"
+
+#: wp-fcrf.php:220
+msgid "Your request has been successfully sent"
+msgstr "درخواست شما با موفقیت ارسال شد"
+
+#: wp-fcrf.php:278 wp-fcrf.php:279
+msgid "Consulting Requests"
+msgstr "درخواست های مشاوره"
+
+#: wp-fcrf.php:289 wp-fcrf.php:290
+msgid "Consult History"
+msgstr "آرشیو"
+
+#~ msgid "Phone number is mismatch"
+#~ msgstr "لطفا شماره تلفن معتبر وارد کنید"
+
+#~ msgid "Select Taxonomy"
+#~ msgstr "انتخاب Taxonomy"
+
+#~ msgid "Select Category Parent"
+#~ msgstr "انتخاب والد"
+
+#~ msgid "Categories list to add"
+#~ msgstr "لیست دسته بندی ها"
+
+#~ msgid "Add Categories"
+#~ msgstr "افزودن دسته ها"
+
+#~ msgid "enter your categories per line"
+#~ msgstr "هر دسته را در یک خط جدید وارد کنید"
