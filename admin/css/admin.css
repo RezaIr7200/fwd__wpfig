@@ -19,3 +19,17 @@
     cursor: pointer;
 }
 
+#wpfig_gallery_src .wpfig_gallery_list{
+    overflow: hidden;
+}
+#wpfig_gallery_src .wpfig_gallery_list li{
+    width: 32%;
+    float: left;
+    margin-left: 1%;
+}
+
+#wpfig_gallery_src .wpfig_gallery_list img{
+    max-width: 100%;
+    height: auto;
+    border-radius: 3px;
+}

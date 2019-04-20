@@ -69,7 +69,7 @@
 			imageHTML += '<ul class="wpfig_gallery_list">';
 			images.each(function (attachment) {
 				imageIDArray.push(attachment.attributes.id);
-				imageHTML += '<li><div class="wpfig_gallery_container"><button class="wpfig_gallery_remove">❌</button><img id="' + attachment.attributes.id + '" src="' + attachment.attributes.sizes.thumbnail.url + '"></div></li>';
+				imageHTML += '<li><div class="wpfig_gallery_container"><button class="wpfig_gallery_remove">✕</button><img id="' + attachment.attributes.id + '" src="' + attachment.attributes.sizes.thumbnail.url + '"></div></li>';
 			});
 			imageHTML += '</ul>';
 			metadataString = imageIDArray.join(",");
