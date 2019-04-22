@@ -14,16 +14,15 @@ if (! defined('WPINC')) {
     die;
 }
 
-define('WPFIG_TABLE_NAME', 'wpfig_table');
-
-// load our helper functions
-//require_once plugin_dir_path(__FILE__) . 'includes/helpers.php';
-
-// required file for creating plugin table
-//require_once plugin_dir_path(__FILE__) . 'includes/install.php';
-
-// run the installation when activating the plugin
-//register_activation_hook(__FILE__, 'wpfig_install');
+/**
+ * USER CONFIG
+ * 
+ * set this variable value to your post type that wpfig adds -
+ * an meta box for that post type.
+ * 
+ * Developer: need to add this option to the plugin settings
+ */
+define('WPFIG_POSTTYPE', 'fartaak-portfolio');
 
 
 /**
@@ -40,27 +39,36 @@ class WP_fig
     /**
      * hold our plugin table name
      */
-    private $_tableName= null;
+ 
+    protected $_wpdb = null;
 
-    private $_wpdb = null;
+    protected $_isAjax = false;
 
-    private $_isAjax = false;
+    protected $_metaFields = null;
 
-    private $_metaFields = null;
+    protected $_prefix = 'wpfig_';
 
-    private $_prefix = 'wpfig_';
+    protected $postType = null;
+
 
     /**
      * Class constructor
      */
     public function __construct()
     {
-        global $wpdb;
+ 
+        /**
+         * This variable holds the post type that -
+         * we will work on it.
+         * 
+         * Should be set in plugin's config.
+         * 
+         */
+        $this->postType = WPFIG_POSTTYPE;
 
-        $this->_wpdb = $wpdb;
-        $this->_tableName = $wpdb->prefix . WPFIG_TABLE_NAME;
-
-
+        /**
+         * the plugin meta box config array
+         */
         $this->_metaFields = array(
             array(
                 'label'=> 'Gallery Images',
@@ -70,20 +78,19 @@ class WP_fig
             ),
         );
 
-        // is current request type is ajax?
-        if (defined('DOING_AJAX') && DOING_AJAX) {
-            $this->isAjax = true;
-        }
-
+        // add admin required script
         add_action( 'admin_enqueue_scripts', array( $this, 'addAdminScripts' ));
 
-
+        // create shortcode for the galery
+        add_shortcode('wpfig_gallery', array($this, 'renderGallery'));
 
         // load textdomain
         add_action('init', array( $this, 'loadTextDomain'));
     
-
+        // adding metabox
         add_action('add_meta_boxes', array( $this, 'addMetaBox'));
+
+        // save gallery images
         add_action('save_post',  array($this,'saveMeta'));
         
     }
@@ -139,18 +146,26 @@ class WP_fig
     }
 
 
-    // Add the Meta Box
+    /**
+     * Create meta box in edit post page
+     * 
+     * @uses renderMetabox
+     */
     public function addMetaBox() {
         add_meta_box(
             'custom_meta_box', // $id
             'Portfolio Gallery', // $title
             array($this,'renderMetabox'), // $callback
-            'fartaak-portfolio', // $page
+            $this->postType, // $page
             'side', // $context
-            'high'
-        ); // $priority
+            'low' // $priority
+        );
     }
 
+    /**
+     * Render metabox contents
+     * 
+     */
     public function renderMetabox($object){
 
         global  $post;
@@ -191,7 +206,7 @@ class WP_fig
     }
 
     /**
-     * 
+     * save gallery to the post meta
      */
     public function saveMeta($post_id)
     {
@@ -206,6 +221,26 @@ class WP_fig
         }
     }
 
+    /**
+     * Create gallery shortcode
+     */
+    public function renderGallery($atts){
+
+        global $post;
+
+        $galleryImages = get_post_meta($post->ID, $this->_prefix . 'gallery' ,true);
+
+        
+        if ( $galleryImages ) {
+            // render shortcode
+
+            $galleryImages = explode(',', $galleryImages);
+
+            require_once plugin_dir_path(__FILE__) . 'public/views/shortcode/shortcode.php';
+        }
+
+    }
+    
 }
 
 
