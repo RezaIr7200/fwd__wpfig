@@ -1,10 +1,10 @@
-#wpfig_gallery_src .wpfig_gallery_container{
+#wpfig-wrap .wpfig-image-wrap{
     position: relative;
     box-sizing: border-box;
 }
 
 
-#wpfig_gallery_src .wpfig_gallery_container .wpfig_gallery_remove{
+#wpfig-wrap .wpfig-image-wrap .wpfig-image__remove{
     position: absolute;
     top: 5px;
     left: 5px;
@@ -19,16 +19,20 @@
     cursor: pointer;
 }
 
-#wpfig_gallery_src .wpfig_gallery_list{
+#wpfig-wrap .wpfig-image-wrap .wpfig-image__remove:hover{
+    background: rgb(238, 80, 52);
+    color: white;
+}
+#wpfig-wrap .wpfig-image-wrap{
     overflow: hidden;
 }
-#wpfig_gallery_src .wpfig_gallery_list li{
+#wpfig-wrap .wpfig-image-wrap{
     width: 32%;
     float: left;
     margin-left: 1%;
 }
 
-#wpfig_gallery_src .wpfig_gallery_list img{
+#wpfig-wrap .wpfig-image-wrap img{
     max-width: 100%;
     height: auto;
     border-radius: 3px;

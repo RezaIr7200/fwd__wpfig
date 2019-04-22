@@ -66,16 +66,17 @@
 			var imageHTML = '';
 			var metadataString = '';
 			images = meta_gallery_frame.state().get('selection');
-			imageHTML += '<ul class="wpfig_gallery_list">';
+			imageHTML += '<ul class="wpfig-images-wrap">';
 			images.each(function (attachment) {
 				imageIDArray.push(attachment.attributes.id);
-				imageHTML += '<li><div class="wpfig_gallery_container"><button class="wpfig_gallery_remove">✕</button><img id="' + attachment.attributes.id + '" src="' + attachment.attributes.sizes.thumbnail.url + '"></div></li>';
+				imageHTML += '<li class="wpfig-image-wrap"><button class="wpfig-image__remove">✕</button><img id="' + attachment.attributes.id + '" src="' + attachment.attributes.sizes.thumbnail.url + '"></li>';
 			});
 			imageHTML += '</ul>';
+			console.log(imageIDArray);
 			metadataString = imageIDArray.join(",");
 			if (metadataString) {
 				$("#wpfig_gallery").val(metadataString);
-				$("#wpfig_gallery_src").html(imageHTML);
+				$("#wpfig-wrap").html(imageHTML);
 				setTimeout(function () {
 					//ajaxUpdateTempMetaData();
 				}, 0);
@@ -88,7 +89,7 @@
 	});
 
 
-	$(document.body).on('click', '.wpfig_gallery_remove', function (event) {
+	$(document.body).on('click', '.wpfig-image__remove', function (event) {
 
 		event.preventDefault();
 
@@ -97,7 +98,7 @@
 			var removedImage = $(this).children('img').attr('id');
 			var oldGallery = $("#wpfig_gallery").val();
 			var newGallery = oldGallery.replace(',' + removedImage, '').replace(removedImage + ',', '').replace(removedImage, '');
-			$(this).parents().eq(1).remove();
+			$(this).parents().eq(0).remove();
 			$("#wpfig_gallery").val(newGallery);
 		}
 

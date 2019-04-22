@@ -169,39 +169,8 @@ class WP_fig
     public function renderMetabox($object){
 
         global  $post;
-        // Use nonce for verification
-        echo '<input type="hidden" name="custom_meta_box_nonce" value="'.wp_create_nonce(basename(__FILE__)).'" />';
 
-        // Begin the field table and loop
-    
-        foreach ($this->_metaFields as $field) {
-                // get value of this field if it exists for this post
-                $meta = get_post_meta($post->ID, $field['id'], true);
-
-
-                // begin a table row with
-
-        
-                switch($field['type']) {
-
-                        case 'gallery':
-                        $meta_html = null;
-                        if ($meta) {
-                
-                                $meta_html .= '<ul class="wpfig_gallery_list">';
-                                $meta_array = explode(',', $meta);
-                                foreach ($meta_array as $meta_gall_item) {
-                                        $meta_html .= '<li><div class="wpfig_gallery_container"><button class="wpfig_gallery_remove">✕</button><img id="' . esc_attr($meta_gall_item) . '" src="' . wp_get_attachment_thumb_url($meta_gall_item) . '"></div></li>';
-                                }
-                                $meta_html .= '</ul>';
-                        }
-                        echo '<input id="wpfig_gallery" type="hidden" name="wpfig_gallery" value="' . esc_attr($meta) . '" />
-                        <span id="wpfig_gallery_src">' . $meta_html . '</span>
-                        <div class="shift8_gallery_button_container"><input id="wpfig_gallery_button" type="button" class="button components-button is-button is-default is-large widefat" value="Manage Gallery" /></div>';
-                        break;
-                } //end switch
-            
-        } // end foreach
+        require_once plugin_dir_path(__FILE__) . 'admin/views/metabox.php';
 
     }
 
