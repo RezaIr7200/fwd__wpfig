@@ -26,9 +26,14 @@
 #wpfig-wrap .wpfig-image-wrap{
     overflow: hidden;
 }
+#wpfig-wrap .wpfig-images-wrap{
+    display: flex;
+    flex-wrap: wrap;
+}
+
 #wpfig-wrap .wpfig-image-wrap{
+    
     width: 32%;
-    float: left;
     margin-left: 1%;
 }
 
@@ -36,4 +41,8 @@
     max-width: 100%;
     height: auto;
     border-radius: 3px;
+}
+
+#wpfig-wrap .over{
+    border-left: 2px dashed gray;
 }

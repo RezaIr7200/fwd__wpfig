@@ -22,7 +22,7 @@
 			<div id="wpfig-wrap">
 				<ul class="wpfig-images-wrap">
 				<?php foreach ($meta_array as $atachment_id) : ?>
-					<li class="wpfig-image-wrap">
+					<li class="wpfig-image-wrap" data-id="<?php echo esc_attr($atachment_id) ?>" draggable="true">
 						<button class="wpfig-image__remove">✕</button>
 						<img id="<?php echo esc_attr($atachment_id) ?>" src="<?php echo wp_get_attachment_thumb_url($atachment_id) ?>">
 					</li>

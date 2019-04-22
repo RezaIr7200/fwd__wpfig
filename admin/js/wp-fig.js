@@ -2,6 +2,24 @@
 
 	$(document).ready(function(){
 
+		var imagesSeq=[];
+		var imagesArr;
+
+		var updateImageItemsInput = function(){
+		if( $('.wpfig-images-wrap').length ){
+			imagesSeq=[];
+
+			imagesArr = $('.wpfig-images-wrap .wpfig-image-wrap') ;
+
+			imagesArr.each(function(){
+				imagesSeq.push( $(this).attr('data-id') ); 
+			});
+
+			$("#wpfig_gallery").val(imagesSeq.join(","));
+
+		}
+	}
+
 
 	var meta_gallery_frame;
 	// Runs when the image button is clicked.
@@ -69,10 +87,10 @@
 			imageHTML += '<ul class="wpfig-images-wrap">';
 			images.each(function (attachment) {
 				imageIDArray.push(attachment.attributes.id);
-				imageHTML += '<li class="wpfig-image-wrap"><button class="wpfig-image__remove">✕</button><img id="' + attachment.attributes.id + '" src="' + attachment.attributes.sizes.thumbnail.url + '"></li>';
+				imageHTML += '<li class="wpfig-image-wrap" data-id="'+attachment.attributes.id+'" draggable="true"><button class="wpfig-image__remove">✕</button><img id="' + attachment.attributes.id + '" src="' + attachment.attributes.sizes.thumbnail.url + '"></li>';
 			});
 			imageHTML += '</ul>';
-			console.log(imageIDArray);
+
 			metadataString = imageIDArray.join(",");
 			if (metadataString) {
 				$("#wpfig_gallery").val(metadataString);
@@ -81,6 +99,8 @@
 					//ajaxUpdateTempMetaData();
 				}, 0);
 			}
+
+			initDraggable();
 		});
 
 		// Finally, open the modal
@@ -103,5 +123,91 @@
 		}
 
 	});
+
+
+	// make image items draggabe for ordering
+
+	var dragSrcEl = null;
+
+	function handleDragStart(e) {
+	  // Target (this) element is the source node.
+	  dragSrcEl = this;
+	
+	  e.dataTransfer.effectAllowed = 'move';
+	  e.dataTransfer.setData('text/html', this.outerHTML);
+	
+	  this.classList.add('dragElem');
+	}
+	function handleDragOver(e) {
+	  if (e.preventDefault) {
+		e.preventDefault(); // Necessary. Allows us to drop.
+	  }
+	  this.classList.add('over');
+	
+	  e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+	
+	  return false;
+	}
+	
+	function handleDragEnter(e) {
+	  // this / e.target is the current hover target.
+	}
+	
+	function handleDragLeave(e) {
+	  this.classList.remove('over');  // this / e.target is previous target element.
+	}
+	
+	function handleDrop(e) {
+	  // this/e.target is current target element.
+	
+	  if (e.preventDefault) { e.preventDefault(); }
+
+	  if (e.stopPropagation) {e.stopPropagation(); }
+	
+	  // Don't do anything if dropping the same column we're dragging.
+	  if (dragSrcEl != this) {
+		// Set the source column's HTML to the HTML of the column we dropped on.
+		//alert(this.outerHTML);
+		//dragSrcEl.innerHTML = this.innerHTML;
+		//this.innerHTML = e.dataTransfer.getData('text/html');
+		this.parentNode.removeChild(dragSrcEl);
+		var dropHTML = e.dataTransfer.getData('text/html');
+		this.insertAdjacentHTML('beforebegin',dropHTML);
+		var dropElem = this.previousSibling;
+		addDnDHandlers(dropElem);
+
+		updateImageItemsInput();
+		
+	  }
+	  this.classList.remove('over');
+	  return false;
+	}
+	
+	function handleDragEnd(e) {
+	  // this/e.target is the source node.
+	  this.classList.remove('over');
+	
+	  /*[].forEach.call(cols, function (col) {
+		col.classList.remove('over');
+	  });*/
+	}
+	
+	function addDnDHandlers(elem) {
+	  elem.addEventListener('dragstart',	handleDragStart, false);
+	  elem.addEventListener('dragenter',	handleDragEnter, false)
+	  elem.addEventListener('dragover',		handleDragOver,  false);
+	  elem.addEventListener('dragleave',	handleDragLeave, false);
+	  elem.addEventListener('drop',			handleDrop,      false);
+	  elem.addEventListener('dragend',		handleDragEnd,   false);
+	
+	}
+	
+	function initDraggable(){
+		var dragables = document.querySelectorAll('#wpfig-wrap li[draggable]');
+		[].forEach.call(dragables, addDnDHandlers);
+		
+	}
+	initDraggable();
+	
 });
 })(jQuery);

@@ -216,7 +216,6 @@ class WP_fig
 
         $galleryImages = get_post_meta($post->ID, $this->_prefix . 'gallery' ,true);
 
-        
         if ( $galleryImages ) {
             // render shortcode
 
